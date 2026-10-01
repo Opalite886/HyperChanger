@@ -4883,7 +4883,7 @@ class HyperSystemUiModule : XposedModule() {
     private fun isDynamicIslandView(view: View): Boolean =
         generateSequence<View>(view) { it.parent as? View }.any { it.javaClass.name.contains("dynamicisland", true) }
 
-    private fun installShadeMaterialHooks(preferences: SharedPreferences, classLoader: ClassLoader) {
+    (preferences: SharedPreferences, classLoader: ClassLoader) {
         runCatching {
             installFocusNotificationMaterialEnforcementHooks(preferences, classLoader)
             installFocusNotificationBackgroundHook(preferences, classLoader)
@@ -4897,6 +4897,13 @@ class HyperSystemUiModule : XposedModule() {
                     val view = chain.thisObject as? View
                     val controlCenter = isControlCenterCall()
                     val notification = isNotificationCenterCall()
+if(notification == true && view != null){
+    runCatching {
+        val setBgSource = view.javaClass.getMethod("setMiBackgroundSourceWallpaper", Boolean::class.javaPrimitiveType)
+        setBgSource.invoke(view, false)
+    }
+}
+
                     val normalNotificationMaterial = if (
                         original != null &&
                         original.size >= MIN_GLASS_PARAMS_SIZE &&
